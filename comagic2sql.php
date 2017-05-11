@@ -27,7 +27,7 @@ if (isset($_REQUEST['debug']))
 	$debug=1;
 }
 //----------------------------
-//авторизация в Comagic
+//Р°РІС‚РѕСЂРёР·Р°С†РёСЏ РІ Comagic
 $stage="Auth";
 
 $api=client_api_init($api_url);
@@ -40,7 +40,7 @@ if( strlen($session_key)==0)
 	echo $stage." OK\n";
 
 //------------------
-//Подключение к SQL-базе
+//РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє SQL-Р±Р°Р·Рµ
 $stage="DB connect";
 
 if($database_type=="sqlsrv")
@@ -62,7 +62,7 @@ catch(PDOException $e) {
 echo $stage." OK\n";
 
 //----------------------------
-//проверка от повторного импорта
+//РїСЂРѕРІРµСЂРєР° РѕС‚ РїРѕРІС‚РѕСЂРЅРѕРіРѕ РёРјРїРѕСЂС‚Р°
 $stage="Calls DB exist check:";
 
 //$date=date("Y-m-d");
@@ -105,7 +105,7 @@ if(count($data)>0 && $data[0]['cnt']>0)
 echo $stage." OK\n";
 
 //-------------------
-//получение звонков
+//РїРѕР»СѓС‡РµРЅРёРµ Р·РІРѕРЅРєРѕРІ
 $stage="Calls client:";
 
 $data=client_comagic_calls($api,$session_key,$date_from,$date_till);
@@ -116,58 +116,58 @@ if(count($data)==0)
 	die($stage." No Data, exiting\n");
 
 //-----------------------------------------------
-//разрешенные столбцы для вставки	
+//СЂР°Р·СЂРµС€РµРЅРЅС‹Рµ СЃС‚РѕР»Р±С†С‹ РґР»СЏ РІСЃС‚Р°РІРєРё	
 $fields_array=array(
-	'id'=>array("sql"=>"int")						// id обращения
-    ,'call_date'=>array("sql"=>"varchar")			// Время звонка
-    ,'session_start'=>array("sql"=>"varchar")		// Время начала сессии, связанной со звонком
-    ,'communication_type'=>array("sql"=>"varchar") // Тип звонка: call - обычный звонок, sitephone - звонок с сайтфона
-    ,'status'=>array("sql"=>"varchar")				// Статус звонка (принятый(normal)/пропущенный(lost))
-    ,'numa'=>array("sql"=>"varchar")				// С какого номера звонили (АОН)
-    ,'numb'=>array("sql"=>"varchar")				// На какой номер звонили (номер услуги)
-    ,'wait_time'=>array("sql"=>"int")				// Время ожидания
-    ,'duration'=>array("sql"=>"int")				// Продолжительность разговора
-    ,'file_link'=>array("sql"=>"text","type"=>"array")	// Ссылка на запись разговора,
-    ,'operator_name'=>array("sql"=>"varchar")		// Оператор
-    ,'coach_name'=>array("sql"=>"varchar")			// Тренер
-    ,'scenario_name'=>array("sql"=>"varchar")		// Название сценария 
-    ,'is_transfer'=>array("sql"=>"varchar")			// Трансфер
-    ,'tags'=>array("sql"=>"text","type"=>"array")	// Массив id установленных тегов
-    ,'communication_number'=>array("sql"=>"int")	// Номер обращения (рассчитывается в пределах персоны по всем типам коммуникаций)
-    ,'site_id'=>array("sql"=>"int")					// id сайта
-    ,'ac_id'=>array("sql"=>"int")					// id рекламной кампании
-    ,'visitor_id'=>array("sql"=>"int")				// id посетителя
-    ,'visitor_type'=>array("sql"=>"varchar")		// Тип посетителя
-    ,'visits_count'=>array("sql"=>"int")			// Общее количество посещений посетителя
-    ,'other_adv_contacts'=>array("sql"=>"varchar") // Флаг показывает заходил ли посетитель (в пределах персоны) по другим рекламным кампаниям
-    ,'country'=>array("sql"=>"varchar")				// Страна
-    ,'region'=>array("sql"=>"varchar")				// Регион
-    ,'city'=>array("sql"=>"varchar")				// Город
-    ,'visitor_first_ac'=>array("sql"=>"int")		// id первой рекламной кампании
-    ,'search_engine'=>array("sql"=>"varchar")		// Поисковая система
-    ,'search_query'=>array("sql"=>"text")			// Поисковый запрос
-    ,'page_url'=>array("sql"=>"text")				// Адрес посадочной страницы
-    ,'referrer_domain'=>array("sql"=>"text")		// Домен, с которого был сделан переход
-    ,'referrer'=>array("sql"=>"text")				// Адрес страницы, с которой был сделан переход
+	'id'=>array("sql"=>"int")						// id РѕР±СЂР°С‰РµРЅРёСЏ
+    ,'call_date'=>array("sql"=>"varchar")			// Р’СЂРµРјСЏ Р·РІРѕРЅРєР°
+    ,'session_start'=>array("sql"=>"varchar")		// Р’СЂРµРјСЏ РЅР°С‡Р°Р»Р° СЃРµСЃСЃРёРё, СЃРІСЏР·Р°РЅРЅРѕР№ СЃРѕ Р·РІРѕРЅРєРѕРј
+    ,'communication_type'=>array("sql"=>"varchar") // РўРёРї Р·РІРѕРЅРєР°: call - РѕР±С‹С‡РЅС‹Р№ Р·РІРѕРЅРѕРє, sitephone - Р·РІРѕРЅРѕРє СЃ СЃР°Р№С‚С„РѕРЅР°
+    ,'status'=>array("sql"=>"varchar")				// РЎС‚Р°С‚СѓСЃ Р·РІРѕРЅРєР° (РїСЂРёРЅСЏС‚С‹Р№(normal)/РїСЂРѕРїСѓС‰РµРЅРЅС‹Р№(lost))
+    ,'numa'=>array("sql"=>"varchar")				// РЎ РєР°РєРѕРіРѕ РЅРѕРјРµСЂР° Р·РІРѕРЅРёР»Рё (РђРћРќ)
+    ,'numb'=>array("sql"=>"varchar")				// РќР° РєР°РєРѕР№ РЅРѕРјРµСЂ Р·РІРѕРЅРёР»Рё (РЅРѕРјРµСЂ СѓСЃР»СѓРіРё)
+    ,'wait_time'=>array("sql"=>"int")				// Р’СЂРµРјСЏ РѕР¶РёРґР°РЅРёСЏ
+    ,'duration'=>array("sql"=>"int")				// РџСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚СЊ СЂР°Р·РіРѕРІРѕСЂР°
+    ,'file_link'=>array("sql"=>"text","type"=>"array")	// РЎСЃС‹Р»РєР° РЅР° Р·Р°РїРёСЃСЊ СЂР°Р·РіРѕРІРѕСЂР°,
+    ,'operator_name'=>array("sql"=>"varchar")		// РћРїРµСЂР°С‚РѕСЂ
+    ,'coach_name'=>array("sql"=>"varchar")			// РўСЂРµРЅРµСЂ
+    ,'scenario_name'=>array("sql"=>"varchar")		// РќР°Р·РІР°РЅРёРµ СЃС†РµРЅР°СЂРёСЏ 
+    ,'is_transfer'=>array("sql"=>"varchar")			// РўСЂР°РЅСЃС„РµСЂ
+    ,'tags'=>array("sql"=>"text","type"=>"array")	// РњР°СЃСЃРёРІ id СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… С‚РµРіРѕРІ
+    ,'communication_number'=>array("sql"=>"int")	// РќРѕРјРµСЂ РѕР±СЂР°С‰РµРЅРёСЏ (СЂР°СЃСЃС‡РёС‚С‹РІР°РµС‚СЃСЏ РІ РїСЂРµРґРµР»Р°С… РїРµСЂСЃРѕРЅС‹ РїРѕ РІСЃРµРј С‚РёРїР°Рј РєРѕРјРјСѓРЅРёРєР°С†РёР№)
+    ,'site_id'=>array("sql"=>"int")					// id СЃР°Р№С‚Р°
+    ,'ac_id'=>array("sql"=>"int")					// id СЂРµРєР»Р°РјРЅРѕР№ РєР°РјРїР°РЅРёРё
+    ,'visitor_id'=>array("sql"=>"int")				// id РїРѕСЃРµС‚РёС‚РµР»СЏ
+    ,'visitor_type'=>array("sql"=>"varchar")		// РўРёРї РїРѕСЃРµС‚РёС‚РµР»СЏ
+    ,'visits_count'=>array("sql"=>"int")			// РћР±С‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РїРѕСЃРµС‰РµРЅРёР№ РїРѕСЃРµС‚РёС‚РµР»СЏ
+    ,'other_adv_contacts'=>array("sql"=>"varchar") // Р¤Р»Р°Рі РїРѕРєР°Р·С‹РІР°РµС‚ Р·Р°С…РѕРґРёР» Р»Рё РїРѕСЃРµС‚РёС‚РµР»СЊ (РІ РїСЂРµРґРµР»Р°С… РїРµСЂСЃРѕРЅС‹) РїРѕ РґСЂСѓРіРёРј СЂРµРєР»Р°РјРЅС‹Рј РєР°РјРїР°РЅРёСЏРј
+    ,'country'=>array("sql"=>"varchar")				// РЎС‚СЂР°РЅР°
+    ,'region'=>array("sql"=>"varchar")				// Р РµРіРёРѕРЅ
+    ,'city'=>array("sql"=>"varchar")				// Р“РѕСЂРѕРґ
+    ,'visitor_first_ac'=>array("sql"=>"int")		// id РїРµСЂРІРѕР№ СЂРµРєР»Р°РјРЅРѕР№ РєР°РјРїР°РЅРёРё
+    ,'search_engine'=>array("sql"=>"varchar")		// РџРѕРёСЃРєРѕРІР°СЏ СЃРёСЃС‚РµРјР°
+    ,'search_query'=>array("sql"=>"text")			// РџРѕРёСЃРєРѕРІС‹Р№ Р·Р°РїСЂРѕСЃ
+    ,'page_url'=>array("sql"=>"text")				// РђРґСЂРµСЃ РїРѕСЃР°РґРѕС‡РЅРѕР№ СЃС‚СЂР°РЅРёС†С‹
+    ,'referrer_domain'=>array("sql"=>"text")		// Р”РѕРјРµРЅ, СЃ РєРѕС‚РѕСЂРѕРіРѕ Р±С‹Р» СЃРґРµР»Р°РЅ РїРµСЂРµС…РѕРґ
+    ,'referrer'=>array("sql"=>"text")				// РђРґСЂРµСЃ СЃС‚СЂР°РЅРёС†С‹, СЃ РєРѕС‚РѕСЂРѕР№ Р±С‹Р» СЃРґРµР»Р°РЅ РїРµСЂРµС…РѕРґ
     ,'ua_client_id'=>array("sql"=>"text")			// User ID Universal Analytics
-    ,'utm_campaign'=>array("sql"=>"text")			// Значения меток utm
+    ,'utm_campaign'=>array("sql"=>"text")			// Р—РЅР°С‡РµРЅРёСЏ РјРµС‚РѕРє utm
     ,'utm_content'=>array("sql"=>"text")
     ,'utm_medium'=>array("sql"=>"text")
     ,'utm_source'=>array("sql"=>"text")
     ,'utm_term'=>array("sql"=>"text")
-    ,'os_ad_id'=>array("sql"=>"text")				// Значения меток OpenStat
+    ,'os_ad_id'=>array("sql"=>"text")				// Р—РЅР°С‡РµРЅРёСЏ РјРµС‚РѕРє OpenStat
     ,'os_campaign_id'=>array("sql"=>"text")
     ,'os_service_name'=>array("sql"=>"text")
     ,'os_source_id'=>array("sql"=>"text")
-    ,'gclid'=>array("sql"=>"text")					// Значение метки gclid
-    ,'yclid'=>array("sql"=>"text")					// Значение метки yclid
-    ,'ef_id'=>array("sql"=>"text")					// Значение метки ef_id
-    ,'session_id'=>array("sql"=>"int")				// id сессии
-    ,'sale_date'=>array("sql"=>"varchar")			// Дата сделки
-    ,'sale_cost'=>array("sql"=>"varchar")			// Сумма сделки
-    ,'direction'=>array("sql"=>"varchar")			// Направление звонка. in - Входящий, out - Исходящий
-    ,'last_query'=>array("sql"=>"text")			// Подтянутый поисковый запрос
-    ,'is_visitor_by_numa'=>array("sql"=>"varchar") // Флаг показывает подтянута сессия или нет: true - сессия подтянута с предыдущего посещения, false - сессия не была подтянута				
+    ,'gclid'=>array("sql"=>"text")					// Р—РЅР°С‡РµРЅРёРµ РјРµС‚РєРё gclid
+    ,'yclid'=>array("sql"=>"text")					// Р—РЅР°С‡РµРЅРёРµ РјРµС‚РєРё yclid
+    ,'ef_id'=>array("sql"=>"text")					// Р—РЅР°С‡РµРЅРёРµ РјРµС‚РєРё ef_id
+    ,'session_id'=>array("sql"=>"int")				// id СЃРµСЃСЃРёРё
+    ,'sale_date'=>array("sql"=>"varchar")			// Р”Р°С‚Р° СЃРґРµР»РєРё
+    ,'sale_cost'=>array("sql"=>"varchar")			// РЎСѓРјРјР° СЃРґРµР»РєРё
+    ,'direction'=>array("sql"=>"varchar")			// РќР°РїСЂР°РІР»РµРЅРёРµ Р·РІРѕРЅРєР°. in - Р’С…РѕРґСЏС‰РёР№, out - РСЃС…РѕРґСЏС‰РёР№
+    ,'last_query'=>array("sql"=>"text")			// РџРѕРґС‚СЏРЅСѓС‚С‹Р№ РїРѕРёСЃРєРѕРІС‹Р№ Р·Р°РїСЂРѕСЃ
+    ,'is_visitor_by_numa'=>array("sql"=>"varchar") // Р¤Р»Р°Рі РїРѕРєР°Р·С‹РІР°РµС‚ РїРѕРґС‚СЏРЅСѓС‚Р° СЃРµСЃСЃРёСЏ РёР»Рё РЅРµС‚: true - СЃРµСЃСЃРёСЏ РїРѕРґС‚СЏРЅСѓС‚Р° СЃ РїСЂРµРґС‹РґСѓС‰РµРіРѕ РїРѕСЃРµС‰РµРЅРёСЏ, false - СЃРµСЃСЃРёСЏ РЅРµ Р±С‹Р»Р° РїРѕРґС‚СЏРЅСѓС‚Р°				
 );
 
 $table_name="US_WEB_COMAGIC_CALLS";	
@@ -176,7 +176,7 @@ $count=db_insert($conn,$data,$fields_array,$table_name);
 echo $stage." inserted to ".$table_name." ".$count." rows.\n";
 
 //-----------------------------------------------
-//обработка новых записей в SQL
+//РѕР±СЂР°Р±РѕС‚РєР° РЅРѕРІС‹С… Р·Р°РїРёСЃРµР№ РІ SQL
 $stage="Calls SQL Update MEDIALOG_CALL_ID";
 
 $sql="update [US_WEB_COMAGIC_calls] set MEDIALOG_CALL_ID=CALLS.CALLS_ID
@@ -215,7 +215,7 @@ $count = $st->rowCount();
 echo ($stage." count=".$count."\n");
 
 //-----------------------------------------------
-//Получение списка рекламных кампаний 
+//РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° СЂРµРєР»Р°РјРЅС‹С… РєР°РјРїР°РЅРёР№ 
 $stage="AC get";
 
 $data=client_comagic_ac($api,$session_key);
@@ -226,7 +226,7 @@ if(count($data)==0)
 	die($stage." No Data, exiting\n");
 
 //-----------------------------------------------
-//очистка временной таблицы
+//РѕС‡РёСЃС‚РєР° РІСЂРµРјРµРЅРЅРѕР№ С‚Р°Р±Р»РёС†С‹
 $stage="delete from US_WEB_COMAGIC_AC_TMP";
 
 $sql="delete from US_WEB_COMAGIC_AC_TMP";
@@ -237,12 +237,12 @@ $count = $st->rowCount();
 echo ($stage." count=".$count."\n");
 
 //-----------------------------------------------
-//разрешенные столбцы для вставки	
+//СЂР°Р·СЂРµС€РµРЅРЅС‹Рµ СЃС‚РѕР»Р±С†С‹ РґР»СЏ РІСЃС‚Р°РІРєРё	
 $stage="AC TMP insert";
 
 $fields_array=array(
-	'id'=>array("sql"=>"int")				// id рекламной кампании
-    ,'name'=>array("sql"=>"varchar") 			//Название рекламной кампании
+	'id'=>array("sql"=>"int")				// id СЂРµРєР»Р°РјРЅРѕР№ РєР°РјРїР°РЅРёРё
+    ,'name'=>array("sql"=>"varchar") 			//РќР°Р·РІР°РЅРёРµ СЂРµРєР»Р°РјРЅРѕР№ РєР°РјРїР°РЅРёРё
  );
 	
 $table_name="US_WEB_COMAGIC_AC_TMP";
@@ -250,8 +250,8 @@ $count=db_insert($conn,$data,$fields_array,$table_name);
 
 echo $stage." inserted to ".$table_name." ".$count." rows.\n";
 //-----------------------------------------------
-//рекламные кампании
-//вставка отсутствующих записей 
+//СЂРµРєР»Р°РјРЅС‹Рµ РєР°РјРїР°РЅРёРё
+//РІСЃС‚Р°РІРєР° РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёС… Р·Р°РїРёСЃРµР№ 
 $stage="AC insert from TMP";
 
 $sql="insert into US_WEB_COMAGIC_AC
@@ -270,7 +270,7 @@ $count = $st->rowCount();
 echo ($stage." count=".$count."\n");
 
 //-----------------------------------------------
-//обновление названий
+//РѕР±РЅРѕРІР»РµРЅРёРµ РЅР°Р·РІР°РЅРёР№
 $stage="AC Update from TMP";
 
 $sql="update old set NAME=tmp.NAME
@@ -284,7 +284,7 @@ $count = $st->rowCount();
 echo ($stage." count=".$count."\n");
 
 //-----------------------------------------------
-//получения списка сайтов аккаунта используется функция site. 
+//РїРѕР»СѓС‡РµРЅРёСЏ СЃРїРёСЃРєР° СЃР°Р№С‚РѕРІ Р°РєРєР°СѓРЅС‚Р° РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С„СѓРЅРєС†РёСЏ site. 
 /*
 $stage="Site get";
 
@@ -299,8 +299,8 @@ if(count($data)==0)
 $stage="Site insert";
 
 $fields_array=array(
-	'id'=>array("sql"=>"int")				// id рекламной кампании
-    ,'domain'=>array("sql"=>"varchar") 			//Название рекламной кампании
+	'id'=>array("sql"=>"int")				// id СЂРµРєР»Р°РјРЅРѕР№ РєР°РјРїР°РЅРёРё
+    ,'domain'=>array("sql"=>"varchar") 			//РќР°Р·РІР°РЅРёРµ СЂРµРєР»Р°РјРЅРѕР№ РєР°РјРїР°РЅРёРё
  );
 	
 $table_name="US_WEB_COMAGIC_SITE_TMP";
@@ -324,7 +324,7 @@ function db_insert($conn,$data,$fields_array,$table_name)
 		)
 		return false;
 	
-	//заполнение столбцов в SQL-запросе
+	//Р·Р°РїРѕР»РЅРµРЅРёРµ СЃС‚РѕР»Р±С†РѕРІ РІ SQL-Р·Р°РїСЂРѕСЃРµ
 	
 	$sql_columns="";
 	$sql_vals="";

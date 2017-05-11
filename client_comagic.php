@@ -17,7 +17,7 @@ function client_comagic($api_url,$api_username,$api_password,$date_from,$date_ti
 	});
 
 	/*
-	Для авторизации в системе используется функция login.
+	Р”Р»СЏ Р°РІС‚РѕСЂРёР·Р°С†РёРё РІ СЃРёСЃС‚РµРјРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С„СѓРЅРєС†РёСЏ login.
 	http://api.comagic.ru/api/login/?login=login&password=password
 	*/
 
@@ -52,7 +52,7 @@ function client_comagic($api_url,$api_username,$api_password,$date_from,$date_ti
 	}
 
 	/*
-	Функция call возвращает информацию по звонкам.
+	Р¤СѓРЅРєС†РёСЏ call РІРѕР·РІСЂР°С‰Р°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ РїРѕ Р·РІРѕРЅРєР°Рј.
 	http://api.comagic.ru/api/v1/call/?session_key=2271a5c46bfe6cdadfd1a6daebdd3b9e&date_from=2017-02-27%2000:00:00&date_till=2017-02-28%2000:00:00
 	*/
 	$date=date("Ymd");
@@ -86,7 +86,7 @@ function client_comagic($api_url,$api_username,$api_password,$date_from,$date_ti
 	}
 
 	/*
-	Для завершения сессии используется функция logout.
+	Р”Р»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ СЃРµСЃСЃРёРё РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С„СѓРЅРєС†РёСЏ logout.
 	http://api.comagic.ru/api/logout/?session_key=05e765dc1ac3901fe1b57b865924271d
 	*/
 
@@ -126,7 +126,7 @@ function client_comagic_login($api,$api_username,$api_password)
 		return false;
 	
 	/*
-	Для авторизации в системе используется функция login.
+	Р”Р»СЏ Р°РІС‚РѕСЂРёР·Р°С†РёРё РІ СЃРёСЃС‚РµРјРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С„СѓРЅРєС†РёСЏ login.
 	http://api.comagic.ru/api/login/?login=login&password=password
 	*/
 
@@ -158,7 +158,7 @@ function comagic_api_logout($api,$session_key)
 		return false;
 	
 	/*
-	Для завершения сессии используется функция logout.
+	Р”Р»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ СЃРµСЃСЃРёРё РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С„СѓРЅРєС†РёСЏ logout.
 	http://api.comagic.ru/api/logout/?session_key=05e765dc1ac3901fe1b57b865924271d
 	*/
 
@@ -182,7 +182,7 @@ function client_comagic_calls($api,$session_key,$date_from,$date_till,$site_id=n
 		return null;
 	
 	/*
-	Функция call возвращает информацию по звонкам.
+	Р¤СѓРЅРєС†РёСЏ call РІРѕР·РІСЂР°С‰Р°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ РїРѕ Р·РІРѕРЅРєР°Рј.
 	http://api.comagic.ru/api/v1/call/?session_key=05e765dc1ac3901fe1b57b865924271d&date_from=2014-12-10%2017:10:00&date_till=2014-12-10%2017:20:00
 	*/
 
@@ -217,7 +217,7 @@ function client_comagic_ac($api,$session_key,$site_id=null,$customer_id=null)
 		return null;
 	
 	/*
-	Для получения списка рекламных кампаний используется функция ac.
+	Р”Р»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРїРёСЃРєР° СЂРµРєР»Р°РјРЅС‹С… РєР°РјРїР°РЅРёР№ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С„СѓРЅРєС†РёСЏ ac.
 	http://api.comagic.ru/api/v1/ac/?session_key=05e765dc1ac3901fe1b57b865924271d
 	*/
 
@@ -252,7 +252,7 @@ function client_comagic_site($api,$session_key,$customer_id=null)
 		return null;
 	
 	/*
-	Для получения списка сайтов аккаунта используется функция site.
+	Р”Р»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРїРёСЃРєР° СЃР°Р№С‚РѕРІ Р°РєРєР°СѓРЅС‚Р° РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ С„СѓРЅРєС†РёСЏ site.
 	http://api.comagic.ru/api/v1/site/?session_key=05e765dc1ac3901fe1b57b865924271d
 	*/
 
