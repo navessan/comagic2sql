@@ -76,17 +76,24 @@ $date=$date->format('Y-m-d');
 $date_from=$date.' 00:00:00';
 $date_till=$date.' 23:59:59';
 
-//$date_from='2017-03-01 00:00:00';
-//$date_till='2017-03-01 00:00:00';
+//$date_from='2019-01-01 00:00:00';
+//$date_till='2019-08-30 00:00:00';
 //------------------
 echo $stage." period $date_from - $date_till\n";
+
+$sql_calls_common_filter= 
+"convert(datetime,call_date,120)> convert(datetime, :date_from, 120) and 
+ convert(datetime,call_date,120)< convert(datetime, :date_till, 120)";
+ if (strlen($sites)>0){
+	$sql_calls_common_filter.=" and
+	site_id in ($sites)"; 
+ }
 
 $sql="select count(*) as cnt
  from US_WEB_COMAGIC_CALLS 
  where 
- convert(datetime,call_date,120)> convert(datetime, :date_from, 120) and 
- convert(datetime,call_date,120)< convert(datetime, :date_till, 120) ";
- 
+ $sql_calls_common_filter";
+  
 $r=array('date_from' =>$date_from
 		,'date_till' =>$date_till); 
  
@@ -103,116 +110,6 @@ if(count($data)>0 && $data[0]['cnt']>0)
 }
 
 echo $stage." OK\n";
-
-//-------------------
-//получение звонков
-$stage="Calls client:";
-
-$data=client_comagic_calls($api,$session_key,$date_from,$date_till);
-//print_r($data);
-
-echo ($stage." Data from client count=".count($data)."\n");
-if(count($data)==0)
-	die($stage." No Data, exiting\n");
-
-//-----------------------------------------------
-//разрешенные столбцы для вставки	
-$fields_array=array(
-	'id'=>array("sql"=>"int")						// id обращения
-    ,'call_date'=>array("sql"=>"varchar")			// Время звонка
-    ,'session_start'=>array("sql"=>"varchar")		// Время начала сессии, связанной со звонком
-    ,'communication_type'=>array("sql"=>"varchar") // Тип звонка: call - обычный звонок, sitephone - звонок с сайтфона
-    ,'status'=>array("sql"=>"varchar")				// Статус звонка (принятый(normal)/пропущенный(lost))
-    ,'numa'=>array("sql"=>"varchar")				// С какого номера звонили (АОН)
-    ,'numb'=>array("sql"=>"varchar")				// На какой номер звонили (номер услуги)
-    ,'wait_time'=>array("sql"=>"int")				// Время ожидания
-    ,'duration'=>array("sql"=>"int")				// Продолжительность разговора
-    ,'file_link'=>array("sql"=>"text","type"=>"array")	// Ссылка на запись разговора,
-    ,'operator_name'=>array("sql"=>"varchar")		// Оператор
-    ,'coach_name'=>array("sql"=>"varchar")			// Тренер
-    ,'scenario_name'=>array("sql"=>"varchar")		// Название сценария 
-    ,'is_transfer'=>array("sql"=>"varchar")			// Трансфер
-    ,'tags'=>array("sql"=>"text","type"=>"array")	// Массив id установленных тегов
-    ,'communication_number'=>array("sql"=>"int")	// Номер обращения (рассчитывается в пределах персоны по всем типам коммуникаций)
-    ,'site_id'=>array("sql"=>"int")					// id сайта
-    ,'ac_id'=>array("sql"=>"int")					// id рекламной кампании
-    ,'visitor_id'=>array("sql"=>"int")				// id посетителя
-    ,'visitor_type'=>array("sql"=>"varchar")		// Тип посетителя
-    ,'visits_count'=>array("sql"=>"int")			// Общее количество посещений посетителя
-    ,'other_adv_contacts'=>array("sql"=>"varchar") // Флаг показывает заходил ли посетитель (в пределах персоны) по другим рекламным кампаниям
-    ,'country'=>array("sql"=>"varchar")				// Страна
-    ,'region'=>array("sql"=>"varchar")				// Регион
-    ,'city'=>array("sql"=>"varchar")				// Город
-    ,'visitor_first_ac'=>array("sql"=>"int")		// id первой рекламной кампании
-    ,'search_engine'=>array("sql"=>"varchar")		// Поисковая система
-    ,'search_query'=>array("sql"=>"text")			// Поисковый запрос
-    ,'page_url'=>array("sql"=>"text")				// Адрес посадочной страницы
-    ,'referrer_domain'=>array("sql"=>"text")		// Домен, с которого был сделан переход
-    ,'referrer'=>array("sql"=>"text")				// Адрес страницы, с которой был сделан переход
-    ,'ua_client_id'=>array("sql"=>"text")			// User ID Universal Analytics
-    ,'utm_campaign'=>array("sql"=>"text")			// Значения меток utm
-    ,'utm_content'=>array("sql"=>"text")
-    ,'utm_medium'=>array("sql"=>"text")
-    ,'utm_source'=>array("sql"=>"text")
-    ,'utm_term'=>array("sql"=>"text")
-    ,'os_ad_id'=>array("sql"=>"text")				// Значения меток OpenStat
-    ,'os_campaign_id'=>array("sql"=>"text")
-    ,'os_service_name'=>array("sql"=>"text")
-    ,'os_source_id'=>array("sql"=>"text")
-    ,'gclid'=>array("sql"=>"text")					// Значение метки gclid
-    ,'yclid'=>array("sql"=>"text")					// Значение метки yclid
-    ,'ef_id'=>array("sql"=>"text")					// Значение метки ef_id
-    ,'session_id'=>array("sql"=>"int")				// id сессии
-    ,'sale_date'=>array("sql"=>"varchar")			// Дата сделки
-    ,'sale_cost'=>array("sql"=>"varchar")			// Сумма сделки
-    ,'direction'=>array("sql"=>"varchar")			// Направление звонка. in - Входящий, out - Исходящий
-    ,'last_query'=>array("sql"=>"text")			// Подтянутый поисковый запрос
-    ,'is_visitor_by_numa'=>array("sql"=>"varchar") // Флаг показывает подтянута сессия или нет: true - сессия подтянута с предыдущего посещения, false - сессия не была подтянута				
-);
-
-$table_name="US_WEB_COMAGIC_CALLS";	
-$count=db_insert($conn,$data,$fields_array,$table_name);
-
-echo $stage." inserted to ".$table_name." ".$count." rows.\n";
-
-//-----------------------------------------------
-//обработка новых записей в SQL
-$stage="Calls SQL Update MEDIALOG_CALL_ID";
-
-$sql="update [US_WEB_COMAGIC_calls] set MEDIALOG_CALL_ID=CALLS.CALLS_ID
-FROM US_WEB_COMAGIC_calls web
-join calls on calls.phone=web.numa and abs(datediff(MINUTE,convert(datetime,web.call_date,120),CALLS.CALL_DATETIME))<2
-where 
- web.MEDIALOG_CALL_ID is null and 
- convert(datetime,call_date,120)> convert(datetime, :date_from, 120) and 
- convert(datetime,call_date,120)< convert(datetime, :date_till, 120) ";
-
-$r=array('date_from' =>$date_from
-		,'date_till' =>$date_till); 
- 
-$st = $conn->prepare($sql);
-$st -> execute($r);
-$count = $st->rowCount();
-echo ($stage." count=".$count."\n");
-
-//-----------------------------------------------
-$stage="Calls SQL Update file_link";
-
-$sql="update [US_WEB_COMAGIC_calls] set file_link='http:'+cast(file_link as varchar(max))
-FROM US_WEB_COMAGIC_calls web
-where
- datalength(file_link)>0 and
- file_link not like 'http%' and 
- convert(datetime,call_date,120)> convert(datetime, :date_from, 120) and 
- convert(datetime,call_date,120)< convert(datetime, :date_till, 120) ";
-
-$r=array('date_from' =>$date_from
-		,'date_till' =>$date_till); 
- 
-$st = $conn->prepare($sql);
-$st -> execute($r);
-$count = $st->rowCount();
-echo ($stage." count=".$count."\n");
 
 //-----------------------------------------------
 //Получение списка рекламных кампаний 
@@ -285,7 +182,7 @@ echo ($stage." count=".$count."\n");
 
 //-----------------------------------------------
 //получения списка сайтов аккаунта используется функция site. 
-/*
+
 $stage="Site get";
 
 $data=client_comagic_site($api,$session_key);
@@ -294,20 +191,157 @@ $data=client_comagic_site($api,$session_key);
 echo ($stage." Data from client count=".count($data)."\n");
 if(count($data)==0)
 	die($stage." No Data, exiting\n");
+//-----------------------------------------------
+//очистка временной таблицы
+$stage="delete from US_WEB_COMAGIC_SITE_TMP";
 
+$sql="delete from US_WEB_COMAGIC_SITE_TMP";
+
+$st = $conn->prepare($sql);
+$st -> execute();
+$count = $st->rowCount();
+echo ($stage." count=".$count."\n");
 //-----------------------------------------------	
 $stage="Site insert";
 
 $fields_array=array(
-	'id'=>array("sql"=>"int")				// id рекламной кампании
-    ,'domain'=>array("sql"=>"varchar") 			//Название рекламной кампании
- );
+	'id'=>array("sql"=>"int")				// id 
+    ,'domain'=>array("sql"=>"varchar") 			//Название 
+	);
 	
 $table_name="US_WEB_COMAGIC_SITE_TMP";
 $count=db_insert($conn,$data,$fields_array,$table_name);
 
 echo $stage." inserted to ".$table_name." ".$count." rows.\n";
-*/
+
+//-----------------------------------------------
+//
+//вставка отсутствующих записей 
+$stage="SITE insert from TMP";
+
+$sql="insert into US_WEB_COMAGIC_SITE
+	(id,domain)
+select
+id,domain
+from US_WEB_COMAGIC_SITE_TMP
+where id not in(
+	select id
+	from US_WEB_COMAGIC_SITE
+)";
+
+$st = $conn->prepare($sql);
+$st -> execute();
+$count = $st->rowCount();
+echo ($stage." count=".$count."\n");
+
+//-------------------
+//получение звонков
+$stage="Calls client:";
+
+$data=client_comagic_calls($api,$session_key,$date_from,$date_till);
+//print_r($data);
+
+echo ($stage." Data from client count=".count($data)."\n");
+if(count($data)==0)
+	die($stage." No Data, exiting\n");
+
+//-----------------------------------------------
+//разрешенные столбцы для вставки	
+$fields_array=array(
+	'id'=>array("sql"=>"int")						// id обращения
+    ,'call_date'=>array("sql"=>"varchar")			// Время звонка
+    ,'session_start'=>array("sql"=>"varchar")		// Время начала сессии, связанной со звонком
+    ,'communication_type'=>array("sql"=>"varchar") // Тип звонка: call - обычный звонок, sitephone - звонок с сайтфона
+    ,'status'=>array("sql"=>"varchar")				// Статус звонка (принятый(normal)/пропущенный(lost))
+    ,'numa'=>array("sql"=>"varchar")				// С какого номера звонили (АОН)
+    ,'numb'=>array("sql"=>"varchar")				// На какой номер звонили (номер услуги)
+    ,'wait_time'=>array("sql"=>"int")				// Время ожидания
+    ,'duration'=>array("sql"=>"int")				// Продолжительность разговора
+    ,'file_link'=>array("sql"=>"text","type"=>"array")	// Ссылка на запись разговора,
+    ,'operator_name'=>array("sql"=>"varchar")		// Оператор
+    ,'coach_name'=>array("sql"=>"varchar")			// Тренер
+    ,'scenario_name'=>array("sql"=>"varchar")		// Название сценария 
+    ,'is_transfer'=>array("sql"=>"varchar")			// Трансфер
+    ,'tags'=>array("sql"=>"text","type"=>"array")	// Массив id установленных тегов
+    ,'communication_number'=>array("sql"=>"int")	// Номер обращения (рассчитывается в пределах персоны по всем типам коммуникаций)
+    ,'site_id'=>array("sql"=>"int")					// id сайта
+    ,'ac_id'=>array("sql"=>"int")					// id рекламной кампании
+    ,'visitor_id'=>array("sql"=>"varchar")				// id посетителя
+    ,'visitor_type'=>array("sql"=>"varchar")		// Тип посетителя
+    ,'visits_count'=>array("sql"=>"int")			// Общее количество посещений посетителя
+    ,'other_adv_contacts'=>array("sql"=>"varchar") // Флаг показывает заходил ли посетитель (в пределах персоны) по другим рекламным кампаниям
+    ,'country'=>array("sql"=>"varchar")				// Страна
+    ,'region'=>array("sql"=>"varchar")				// Регион
+    ,'city'=>array("sql"=>"varchar")				// Город
+    ,'visitor_first_ac'=>array("sql"=>"int")		// id первой рекламной кампании
+    ,'search_engine'=>array("sql"=>"varchar")		// Поисковая система
+    ,'search_query'=>array("sql"=>"text")			// Поисковый запрос
+    ,'page_url'=>array("sql"=>"text")				// Адрес посадочной страницы
+    ,'referrer_domain'=>array("sql"=>"text")		// Домен, с которого был сделан переход
+    ,'referrer'=>array("sql"=>"text")				// Адрес страницы, с которой был сделан переход
+    ,'ua_client_id'=>array("sql"=>"text")			// User ID Universal Analytics
+    ,'utm_campaign'=>array("sql"=>"text")			// Значения меток utm
+    ,'utm_content'=>array("sql"=>"text")
+    ,'utm_medium'=>array("sql"=>"text")
+    ,'utm_source'=>array("sql"=>"text")
+    ,'utm_term'=>array("sql"=>"text")
+    ,'os_ad_id'=>array("sql"=>"text")				// Значения меток OpenStat
+    ,'os_campaign_id'=>array("sql"=>"text")
+    ,'os_service_name'=>array("sql"=>"text")
+    ,'os_source_id'=>array("sql"=>"text")
+    ,'gclid'=>array("sql"=>"text")					// Значение метки gclid
+    ,'yclid'=>array("sql"=>"text")					// Значение метки yclid
+    ,'ef_id'=>array("sql"=>"text")					// Значение метки ef_id
+    ,'session_id'=>array("sql"=>"varchar")				// id сессии
+    ,'sale_date'=>array("sql"=>"varchar")			// Дата сделки
+    ,'sale_cost'=>array("sql"=>"varchar")			// Сумма сделки
+    ,'direction'=>array("sql"=>"varchar")			// Направление звонка. in - Входящий, out - Исходящий
+    ,'last_query'=>array("sql"=>"text")			// Подтянутый поисковый запрос
+    ,'is_visitor_by_numa'=>array("sql"=>"varchar") // Флаг показывает подтянута сессия или нет: true - сессия подтянута с предыдущего посещения, false - сессия не была подтянута				
+);
+
+$table_name="US_WEB_COMAGIC_CALLS";	
+$count=db_insert($conn,$data,$fields_array,$table_name);
+
+echo $stage." inserted to ".$table_name." ".$count." rows.\n";
+
+//-----------------------------------------------
+//обработка новых записей в SQL
+$stage="Calls SQL Update MEDIALOG_CALL_ID";
+
+$sql="update [US_WEB_COMAGIC_calls] set MEDIALOG_CALL_ID=CALLS.CALLS_ID
+FROM US_WEB_COMAGIC_calls web
+join calls on calls.phone=web.numa and abs(datediff(MINUTE,convert(datetime,web.call_date,120),CALLS.CALL_DATETIME))<2
+where 
+ web.MEDIALOG_CALL_ID is null and 
+ $sql_calls_common_filter";
+
+$r=array('date_from' =>$date_from
+		,'date_till' =>$date_till); 
+ 
+$st = $conn->prepare($sql);
+$st -> execute($r);
+$count = $st->rowCount();
+echo ($stage." count=".$count."\n");
+
+//-----------------------------------------------
+$stage="Calls SQL Update file_link";
+
+$sql="update [US_WEB_COMAGIC_calls] set file_link='http:'+cast(file_link as varchar(max))
+FROM US_WEB_COMAGIC_calls web
+where
+ datalength(file_link)>0 and
+ file_link not like 'http%' and 
+ $sql_calls_common_filter";
+
+$r=array('date_from' =>$date_from
+		,'date_till' =>$date_till); 
+ 
+$st = $conn->prepare($sql);
+$st -> execute($r);
+$count = $st->rowCount();
+echo ($stage." count=".$count."\n");
+
 //-----------------------------------------------
 //close connection
 comagic_api_logout($api,$session_key);
@@ -388,8 +422,8 @@ function db_insert($conn,$data,$fields_array,$table_name)
 		
 		//print_r($r);
 		$st->execute($r);
-		$i=$i+$st->rowCount();
-		//$i++;
+		//$i=$i+$st->rowCount();
+		$i++;
     }
 	return $i;
 }

@@ -13,6 +13,8 @@ $api_url = "http://api.comagic.ru/api";
 $api_username = "login";
 $api_password = "password";
 
+$sites="";
+
 ?>
 
 
